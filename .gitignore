@@ -2,7 +2,7 @@
 # Created by https://www.gitignore.io/api/node,macos,windows,webstorm,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,macos,windows,webstorm,visualstudiocode
 
-logs/
+translate-cli-logs/
 zh-cn.json
 zh-hk.json
 en-us.json

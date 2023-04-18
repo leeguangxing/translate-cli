@@ -21,14 +21,9 @@ program.version(package.version, '-v, --version', '获取版本号');
 // Usage: xxx [options] command
 program.name(package.name).usage('[options] command');
 
-// 帮助信息后追加版权信息
-program.on('--help', function() {
-  console.log(`\n${chalk.bgGreen.bold('--- 作者: leeguangxing.cn ---')}`);
-});
-
 // 设置未知命令时的报错，并退出进程
 program.on('command:*', function() {
-  console.error(chalk.red('无效命令: %s'), program.args.join(' '));
+  console.info(chalk.red('无效命令: %s'), program.args.join(' '));
   console.info('可通过 translate --help 查询可用的命令列表');
   process.exit(1);
 });
@@ -43,6 +38,10 @@ program
     .option(
         '-f, --folder <必须>',
         '需要捕获的目录（绝对路径）',
+    )
+    .option(
+        '-l, --log [可选]',
+        '是否需要将操作日志写入文件，默认不开启，传入 true 启用（保存在当前执行目录下的 translate-cli-logs 目录）',
     )
     .option('-o, --output [可选]', '指定输出多语言 json 文件的目录（绝对路径，默认为当前执行路径）')
     .action(matchCommandHandler);

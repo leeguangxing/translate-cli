@@ -1,13 +1,21 @@
 /* eslint-disable max-len */
 const fs = require('fs');
 const path = require('path');
-const {logger, log4js} = require('../lib/logger');
 const {glob} = require('../lib/util/glob');
 const {multiSelect, confirm} = require('../lib/util/query');
 const {overWrite} = require('../lib/file');
 
 module.exports = async function(params) {
-  const {folder, output = process.cwd()} = params;
+  const {folder, log, output = process.cwd()} = params;
+
+  const logInFile = log === 'true';
+
+  let info = console.info;
+
+  if (logInFile) {
+    const {logger} = require('../lib/logger');
+    info = logger.info;
+  }
 
   const ext = await multiSelect(
       '请选择您需要匹配的文件',
@@ -32,9 +40,9 @@ module.exports = async function(params) {
   const confirmRes = await confirm('请确认您的选择信息');
 
   if (confirmRes && folder) {
-    logger.info(`匹配文件后缀：${ext.join('、')}`);
-    logger.info(`翻译语种：${langs.join('、')}`);
-    logger.info(`匹配目录：${folder}`);
+    info(`匹配文件后缀：${ext.join('、')}`);
+    info(`翻译语种：${langs.join('、')}`);
+    info(`匹配目录：${folder}`);
     // 匹配目录文件
     // /Users/liguangxing/Feimei/dms-system/src/pages/uiMaterial
     const files = await glob(`${folder}/**/*.{${ext.join(',')}}`);
@@ -52,7 +60,7 @@ module.exports = async function(params) {
           );
           if (keys.length) {
             const res = [...new Set(keys)];
-            logger.info(
+            info(
                 `当前匹配文件：${filePath}, 匹配结果：${JSON.stringify(res)}`,
             );
             return res;
@@ -72,13 +80,16 @@ module.exports = async function(params) {
         const obj = {};
         res.forEach((item) => (obj[item] = item));
         overWrite(filePath, obj, 4);
-        logger.info(`${filePath} 文件生成成功！`);
+        info(`${filePath} 文件生成成功！`);
       }
     } else {
-      logger.info('目录下无匹配文件');
+      info('目录下无匹配文件');
     }
   }
 
   // 关闭日志
-  log4js.shutdown();
+  if (logInFile) {
+    const {log4js} = require('../lib/logger');
+    log4js.shutdown();
+  }
 };
