@@ -44,6 +44,7 @@ program
         '是否需要将操作日志写入文件，默认不开启，传入 true 启用（保存在当前执行目录下的 translate-cli-logs 目录）',
     )
     .option('-o, --output [可选]', '指定输出多语言 json 文件的目录（绝对路径，默认为当前执行路径）')
+    .option('-u, --useDefault [可选]', '参数是否全部使用默认值')
     .action(matchCommandHandler);
 
 // process.argv 属性返回一个数组，其中包含当启动 Node.js 进程时传入的命令行参数。

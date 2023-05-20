@@ -15,3 +15,8 @@ npm install -g @leeguangxing/translate-cli
 ```shell
 translate -h
 ```
+
+示例：
+```shell
+translate match -f /Users/liguangxing/Feimei/dms-system -u
+```

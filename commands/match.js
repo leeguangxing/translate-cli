@@ -6,7 +6,7 @@ const {multiSelect, confirm} = require('../lib/util/query');
 const {overWrite} = require('../lib/file');
 
 module.exports = async function(params) {
-  const {folder, log, output = process.cwd()} = params;
+  const {folder, log, output = process.cwd(), useDefault} = params;
 
   const logInFile = log === 'true';
 
@@ -17,27 +17,40 @@ module.exports = async function(params) {
     info = logger.info;
   }
 
-  const ext = await multiSelect(
-      '请选择您需要匹配的文件',
-      ['ts', 'tsx', 'js', 'jsx'],
-      ['ts', 'tsx'],
-  );
 
-  const langs = await multiSelect(
-      '请选择您需要的语言，按空格选择',
-      [
-        'zh-cn', // 简体中文(中国)
-        'zh-hk', // 繁体中文(中国香港)
-        'en-us', // 英语
-      ],
-      ['zh-cn', 'en-us'],
-  );
+  let ext;
+  let langs;
+
+  if (useDefault) {
+    ext = ['ts', 'tsx'];
+    langs = ['zh-cn', 'en-us'];
+  } else {
+    ext = await multiSelect(
+        '请选择您需要匹配的文件',
+        ['ts', 'tsx', 'js', 'jsx'],
+        ['ts', 'tsx'],
+    );
+    langs = await multiSelect(
+        '请选择您需要的语言，按空格选择',
+        [
+          'zh-cn', // 简体中文(中国)
+          'zh-hk', // 繁体中文(中国香港)
+          'en-us', // 英语
+        ],
+        ['zh-cn', 'en-us'],
+    );
+  }
 
   console.log('匹配文件后缀：', ext.join('、'));
   console.log('翻译语种：', langs.join('、'));
 
   // 信息确认
-  const confirmRes = await confirm('请确认您的选择信息');
+  let confirmRes;
+  if (useDefault) {
+    confirmRes = true;
+  } else {
+    confirmRes = await confirm('请确认您的选择信息');
+  }
 
   if (confirmRes && folder) {
     info(`匹配文件后缀：${ext.join('、')}`);
