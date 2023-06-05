@@ -8,6 +8,7 @@ const commander = require('commander');
 
 // 命令工具主文件
 const matchCommandHandler = require('../commands/match');
+const downloadCommandHandler = require('../commands/download');
 
 // 引入 package.json 信息
 const package = require('../package.json');
@@ -46,6 +47,18 @@ program
     .option('-o, --output [可选]', '指定输出多语言 json 文件的目录（绝对路径，默认为当前执行路径）')
     .option('-u, --useDefault [可选]', '参数是否全部使用默认值')
     .action(matchCommandHandler);
+
+program
+    .command('download')
+    .alias('download'.charAt(0))
+    .description('拉取指定语种 json 文件到本地指定目录下')
+    .option('-u, --url <必须>', '请求服务器的地址（不必包含请求路径）')
+    .option(
+        '-o, --output [可选]',
+        '需要生成 json 文件的目录（相对目录，默认为当前执行路径）',
+    )
+    .option('-l, --language [可选]', '需要请求 json 文件的语种（以逗号分隔，默认值为 zh-cn,en-us）')
+    .action(downloadCommandHandler);
 
 // process.argv 属性返回一个数组，其中包含当启动 Node.js 进程时传入的命令行参数。
 program.parse(process.argv);
